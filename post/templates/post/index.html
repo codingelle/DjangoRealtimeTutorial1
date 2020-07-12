@@ -1,0 +1,114 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Django Real Time</title>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+       <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_blue-indigo.min.css" /> 
+      <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+      <link rel="stylesheet" href="{% static 'post/base.css' %}">
+  </head>
+  <body>
+      <!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row mat-evelation-z6">
+      <!-- Title -->
+      <span class="mdl-layout-title">Django Real Time</span>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation. We hide it in small screens. -->
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+        <a class="mdl-navigation__link" href="">About</a>
+      </nav>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">Title</span>
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+      <a class="mdl-navigation__link" href="">Link</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content">
+    <div class="page-content">
+      <div class="create-post mat-elevation-z6">
+          <form action="." method="POST">
+	    {% csrf_token %}
+
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		{{ form.message }}
+                <label class="mdl-textfield__label" for="{{ form.message.id_for_label }}">Whats on your mind, {{request.user}}?</label>
+            </div>
+
+            <div>
+              <!-- Accent-colored raised button -->
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">Create Post
+              </button>
+            </div>
+          </form>
+      </div>
+      <div id="stream-content" class="stream-content"></div>
+    </div>
+  </main>
+</div>
+      
+  </body>
+</html>
+
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script>
+  
+  var eventSource  = new EventSource("{% url 'post:stream' %}");
+
+  eventSource.onopen = function() {
+    console.log('Yay! its open?');
+  }
+
+  eventSource.onmessage = function(e) {
+    console.log(e)
+    final_data = JSON.parse(e.data)
+    content = "";
+
+    final_data.forEach(function (item){
+      content += buildPostContent(item['date_created'], item['message'], item['user__username'])
+    })
+      document.getElementById('stream-content').innerHTML = content;
+      console.log(content)
+  }
+
+  eventSource.onerror = function(e) {
+    console.log(`error ${e}`);
+  }
+
+  function buildPostContent(date_created, message, username) {
+    last_hour = getLastHour(date_created)
+    content = `<div class="stream-posts"> <div class="stream-posts-img"><i class="far fa-smile" style="font-size:32px"></i></div>
+	       <div class="stream-posts-user">
+	       	  <div><strong><a href="#">${username}</a></strong></div>
+		  <div>${last_hour}hr</div>
+	       </div>
+	       <div class="stream-posts-msg">
+	        <h4>${message}</h4>
+                </div></div>`;
+	return content
+
+  }
+
+
+  function getLastHour(dt) {
+    let dt1 = new Date(dt);
+    let now = new Date();
+    let hours = Math.abs(now - dt1) / 36e5;
+
+    return Math.round(hours);
+
+  }
+
+</script>
+

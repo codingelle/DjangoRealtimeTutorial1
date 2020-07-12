@@ -1,0 +1,67 @@
+
+*, *:before, *:after {
+ box-sizing: border-box;
+}
+
+html, body {
+  margin:0;
+  padding:0;
+  background-color: #CCC;
+}
+
+
+.page-content {
+  display: grid;
+  grid-template-columns: 1fr;
+/*  grid-template-areas: 'create-post'
+		       'stream-posts'
+		       'stream-content'; */
+  grid-gap:1rem;
+  padding: 1rem;
+  justify-self:center;
+}
+
+.create-post {
+  background-color: white;
+  width:40vw;
+  padding:1rem;
+  justify-self: center;
+}
+
+.stream-content {
+  display: grid;
+  grid-gap:1rem;
+  width:100%;
+}
+
+.stream-posts {
+  background-color: white;
+  width:40vw;
+  justify-self: center;
+  padding:1rem;
+  display:grid;
+  grid-template-columns: 0.1fr auto;
+  grid-template-rows: 40px auto;
+  grid-template-areas: 'stream-post-img stream-post-user'
+		       'stream-post-msg stream-post-msg';
+}
+
+.stream-posts-user {
+  grid-area: stream-post-user;
+  padding:0.5rem;	
+
+}
+.stream-posts-msg {
+  grid-area: stream-post-msg;
+  padding:0.5rem;	
+}	
+
+
+.stream-posts-img {
+  grid-area: stream-post-img;
+  padding:0.5rem;	
+}	
+
+.mat-elevation-z6 {
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+}
